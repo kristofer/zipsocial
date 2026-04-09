@@ -1,0 +1,14 @@
+<div class="card">
+  <h2>Students</h2>
+  <%= if @users == [] do %>
+    <p class="muted">No students yet. <a href="/users/new">Create the first profile.</a></p>
+  <% else %>
+    <%= for user <- @users do %>
+      <p>
+        <a href={"/users/#{user.id}"}><strong><%= user.name %></strong></a>
+        <span class={"badge #{user.language}"}><%= lang_label(user.language) %></span>
+        <span class="muted">· cohort <%= user.cohort %></span>
+      </p>
+    <% end %>
+  <% end %>
+</div>

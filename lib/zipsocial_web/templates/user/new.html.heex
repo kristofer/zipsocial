@@ -1,0 +1,33 @@
+<div class="card">
+  <h2>Create a student profile</h2>
+
+  <.form :let={f} for={@changeset} action="/users">
+    <label>Name</label>
+    <input type="text" name="user[name]" value={Phoenix.HTML.Form.input_value(f, :name)} />
+
+    <label>Cohort</label>
+    <input type="text" name="user[cohort]" value={Phoenix.HTML.Form.input_value(f, :cohort)} placeholder="e.g. 2026-Q2" />
+
+    <label>Primary language</label>
+    <select name="user[language]">
+      <option value="java">☕ Java</option>
+      <option value="python">🐍 Python</option>
+    </select>
+
+    <label>Bio (optional)</label>
+    <textarea name="user[bio]"><%= Phoenix.HTML.Form.input_value(f, :bio) %></textarea>
+
+    <%= if @changeset.action do %>
+      <div class="errors">
+        <strong>Fix these errors:</strong>
+        <ul>
+          <%= for {field, {msg, _}} <- @changeset.errors do %>
+            <li><%= field %> <%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <button type="submit">Create profile</button>
+  </.form>
+</div>

@@ -1,0 +1,26 @@
+<div class="card">
+  <h2><%= @user.name %></h2>
+  <p>
+    <span class={"badge #{@user.language}"}><%= lang_label(@user.language) %></span>
+    <span class="muted">· cohort <%= @user.cohort %></span>
+  </p>
+  <%= if @user.bio do %>
+    <p><%= @user.bio %></p>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3><%= @user.name %>'s posts</h3>
+  <%= if @user.posts == [] do %>
+    <p class="muted">No posts yet.</p>
+  <% else %>
+    <%= for post <- @user.posts do %>
+      <p>
+        <a href={"/posts/#{post.id}"}><strong><%= post.title %></strong></a>
+        <span class={"badge #{post.language}"}><%= lang_label(post.language) %></span>
+      </p>
+    <% end %>
+  <% end %>
+</div>
+
+<p><a href="/users">← all students</a></p>

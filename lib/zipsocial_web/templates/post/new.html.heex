@@ -1,0 +1,44 @@
+<div class="card">
+  <h2>Share a project</h2>
+
+  <%= if @users == [] do %>
+    <p class="muted">You need to <a href="/users/new">create a student profile</a> first.</p>
+  <% else %>
+    <.form :let={f} for={@changeset} action="/posts">
+      <label>Posting as</label>
+      <select name="post[user_id]">
+        <%= for user <- @users do %>
+          <option value={user.id}><%= user.name %> (<%= user.cohort %>)</option>
+        <% end %>
+      </select>
+
+      <label>Title</label>
+      <input type="text" name="post[title]" value={Phoenix.HTML.Form.input_value(f, :title)} placeholder="What did you build?" />
+
+      <label>Language</label>
+      <select name="post[language]">
+        <option value="java">☕ Java</option>
+        <option value="python">🐍 Python</option>
+      </select>
+
+      <label>GitHub URL (optional)</label>
+      <input type="text" name="post[repo_url]" value={Phoenix.HTML.Form.input_value(f, :repo_url)} placeholder="https://github.com/you/repo" />
+
+      <label>What's it about?</label>
+      <textarea name="post[body]"><%= Phoenix.HTML.Form.input_value(f, :body) %></textarea>
+
+      <%= if @changeset.action do %>
+        <div class="errors">
+          <strong>Fix these errors:</strong>
+          <ul>
+            <%= for {field, {msg, _}} <- @changeset.errors do %>
+              <li><%= field %> <%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <button type="submit">Post it</button>
+    </.form>
+  <% end %>
+</div>

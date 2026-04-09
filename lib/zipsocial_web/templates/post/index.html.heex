@@ -1,0 +1,30 @@
+<nav class="filters">
+  <a href="/" class={if @filter == "all", do: "active", else: ""}>All</a>
+  <a href="/java" class={if @filter == "java", do: "active", else: ""}>☕ Java</a>
+  <a href="/python" class={if @filter == "python", do: "active", else: ""}>🐍 Python</a>
+</nav>
+
+<%= if @posts == [] do %>
+  <div class="card">
+    <p class="muted">No posts yet. <a href="/posts/new">Be the first to share a project.</a></p>
+  </div>
+<% else %>
+  <%= for post <- @posts do %>
+    <div class="card">
+      <span class={"badge #{post.language}"}><%= lang_label(post.language) %></span>
+      <h3>
+        <a href={"/posts/#{post.id}"}><%= post.title %></a>
+      </h3>
+      <p class="muted">
+        by <a href={"/users/#{post.user.id}"}><%= post.user.name %></a>
+        · cohort <%= post.user.cohort %>
+        · <%= short_time(post.inserted_at) %>
+        · <%= length(post.comments) %> comment<%= if length(post.comments) == 1, do: "", else: "s" %>
+      </p>
+      <p class="post-body"><%= String.slice(post.body, 0, 240) %><%= if String.length(post.body) > 240, do: "..." %></p>
+      <%= if post.repo_url do %>
+        <p class="muted">🔗 <a href={post.repo_url} target="_blank"><%= post.repo_url %></a></p>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
