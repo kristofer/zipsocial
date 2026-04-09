@@ -35,6 +35,35 @@ Key vocabulary:
 - **Module** — a namespace. Starts with `defmodule Foo do ... end`.
 - **`|>`** — the pipe operator. `a |> b() |> c()` is `c(b(a))`. Read left to right.
 
+## Running with Docker
+
+The easiest way to run ZipSocial is with Docker Compose — no Elixir installation needed.
+
+```bash
+# 1. Build the image and start the container in the background
+docker compose up --build -d
+
+# 2. Open the app
+#    http://localhost:4000
+
+# 3. Stop (data volume is preserved)
+docker compose down
+
+# 4. Stop AND delete the database (destructive!)
+docker compose down -v
+```
+
+The SQLite database is stored in a named Docker volume (`sqlite_data`), so it
+**survives container restarts and image rebuilds**.
+
+Before deploying anywhere public, replace the `SECRET_KEY_BASE` value in
+`docker-compose.yml` with a proper 64-character random string.  Generate one
+with:
+
+```bash
+docker run --rm elixir:1.15-alpine mix phx.gen.secret
+```
+
 ## Running it (once Elixir is installed)
 
 ```bash

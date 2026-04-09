@@ -1,0 +1,34 @@
+# Ignore build artifacts and development-only files so they are not sent to
+# the Docker daemon as part of the build context.
+
+# Elixir / Mix build artefacts
+/_build/
+/deps/
+/doc/
+/.fetch/
+erl_crash.dump
+*.ez
+*.beam
+
+# SQLite database files (generated at runtime via the volume)
+*.db
+*.db-shm
+*.db-wal
+
+# Config secrets (never bake these into the image)
+/config/*.secret.exs
+
+# Development editor / tool files
+.elixir_ls/
+.env
+
+# Git metadata
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Compressed artefacts
+*.tar.gz
+*.zip
