@@ -1,0 +1,38 @@
+# docker-compose.yml — Run ZipSocial with a persistent SQLite database.
+#
+# Usage:
+#   docker compose up --build          # build the image and start
+#   docker compose up -d               # start in the background
+#   docker compose down                # stop (data volume is preserved)
+#   docker compose down -v             # stop AND delete the database volume
+
+services:
+  web:
+    build: .
+    ports:
+      - "4000:4000"
+    environment:
+      # Path inside the container where the SQLite file lives.
+      # Must match the volume mount path below.
+      DATABASE_PATH: /app/data/zipsocial.db
+
+      # Generate a strong secret with: mix phx.gen.secret
+      # !! REQUIRED: replace this placeholder before deploying !!
+      SECRET_KEY_BASE: "REPLACE_ME_run_mix_phx_gen_secret_to_get_a_real_value"
+
+      # Public hostname of the server (used in URL generation).
+      PHX_HOST: localhost
+
+      # Port the Phoenix server listens on inside the container.
+      PORT: "4000"
+
+    volumes:
+      # Named volume so the SQLite database survives container restarts.
+      - sqlite_data:/app/data
+
+    restart: unless-stopped
+
+volumes:
+  # Docker manages this volume; the SQLite file persists across restarts
+  # and image upgrades as long as you don't run `docker compose down -v`.
+  sqlite_data:
