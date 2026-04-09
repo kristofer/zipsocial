@@ -1,0 +1,42 @@
+<div class="card">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h2>Admins (Instructors)</h2>
+    <a href="/admin/new" class="btn">+ New admin</a>
+  </div>
+
+  <%= if @admins == [] do %>
+    <p class="muted">No admins yet.</p>
+  <% else %>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+          <th style="padding: 8px 4px;">Name</th>
+          <th style="padding: 8px 4px;">Email</th>
+          <th style="padding: 8px 4px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= for admin <- @admins do %>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 8px 4px;"><%= admin.name %></td>
+            <td style="padding: 8px 4px; color: var(--muted);"><%= admin.email %></td>
+            <td style="padding: 8px 4px; text-align: right;">
+              <a href={"/admin/#{admin.id}/edit"} style="margin-right: 12px;">Edit</a>
+              <form method="post" action={"/admin/#{admin.id}"} style="display: inline;">
+                <input type="hidden" name="_method" value="DELETE" />
+                <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+                <button type="submit" style="background: none; color: #ff8080; border: none; cursor: pointer; padding: 0; font-size: 14px;"
+                  onclick="return confirm('Delete this admin?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>Student management</h3>
+  <p><a href="/users">View all students</a> · <a href="/users/new">Add a student</a></p>
+</div>

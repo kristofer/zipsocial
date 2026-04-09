@@ -37,6 +37,9 @@ defmodule Zipsocial.MixProject do
       {:ecto_sql, "~> 3.10"},
       {:ecto_sqlite3, "~> 0.12"},
 
+      # Password hashing for admin authentication
+      {:bcrypt_elixir, "~> 3.0"},
+
       # Misc
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}

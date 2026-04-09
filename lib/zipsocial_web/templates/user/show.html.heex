@@ -7,6 +7,17 @@
   <%= if @user.bio do %>
     <p><%= @user.bio %></p>
   <% end %>
+  <%= if admin_logged_in?(@conn) do %>
+    <p style="margin-top: 16px;">
+      <a href={"/users/#{@user.id}/edit"} class="btn" style="margin-right: 8px;">Edit profile</a>
+      <form method="post" action={"/users/#{@user.id}"} style="display: inline;">
+        <input type="hidden" name="_method" value="DELETE" />
+        <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+        <button type="submit" style="background: #4d1010; color: #ff8080; border: 1px solid #7a2020; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px;"
+          onclick="return confirm('Remove this student? This will also delete their posts and comments.')">Remove student</button>
+      </form>
+    </p>
+  <% end %>
 </div>
 
 <div class="card">
