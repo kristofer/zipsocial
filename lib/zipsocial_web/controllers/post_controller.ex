@@ -83,6 +83,8 @@ defmodule ZipsocialWeb.PostController do
 
   # Returns the list of users that the current session may post as.
   # Admins get all users; regular users get only themselves.
+  # The nil branch for user_id is unreachable in practice (the :require_auth
+  # pipeline ensures at least one session is present) but is kept for safety.
   defp users_for_session(conn) do
     case get_session(conn, :admin_id) do
       nil ->

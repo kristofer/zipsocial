@@ -109,12 +109,15 @@ defmodule Zipsocial.Accounts do
 
   # ----------------------------- Password Reset --------------------------
 
+  # Token expiry: 2 hours from generation
+  @reset_token_expiry_seconds 7_200
+
   @doc """
   Generates a 6-character uppercase OTP reset code for a user identified by
   email. Returns {:ok, token, user} so the caller can display or email the code,
   or {:error, :not_found} when no user with that email exists.
 
-  The token is stored (hashed) in the DB and expires in 2 hours.
+  The token is stored in the DB and expires in 2 hours.
   """
   def generate_password_reset_token(email) when is_binary(email) do
     case get_user_by_email(email) do
@@ -128,7 +131,10 @@ defmodule Zipsocial.Accounts do
           |> Base.encode32(padding: false)
           |> String.slice(0, 6)
 
-        expires_at = DateTime.add(DateTime.utc_now(), 2 * 3600, :second) |> DateTime.truncate(:second)
+        expires_at =
+          DateTime.utc_now()
+          |> DateTime.add(@reset_token_expiry_seconds, :second)
+          |> DateTime.truncate(:second)
 
         {:ok, _user} =
           user

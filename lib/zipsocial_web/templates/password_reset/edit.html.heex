@@ -6,7 +6,7 @@
     <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
 
     <label>Reset code</label>
-    <input type="text" name="reset[token_display]" value={@token} readonly style="background: #0b1622; color: var(--muted);" />
+    <input type="text" name="reset[token_display]" value={@token} readonly style="background: var(--bg); color: var(--muted);" />
 
     <label>New password</label>
     <input type="password" name="reset[password]" autocomplete="new-password" />

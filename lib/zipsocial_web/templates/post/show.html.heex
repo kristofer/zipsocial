@@ -35,9 +35,11 @@
 
       <label>Commenting as</label>
       <%= if @current_user_id do %>
-        <%# Regular user — locked to their own profile %>
+        <%# Regular user — locked to their own profile.
+            @users contains exactly this user (set by users_for_session). %>
+        <% [me | _] = @users %>
         <input type="hidden" name="comment[user_id]" value={@current_user_id} />
-        <p style="margin: 4px 0;"><strong><%= hd(@users).name %></strong></p>
+        <p style="margin: 4px 0;"><strong><%= me.name %></strong></p>
       <% else %>
         <%# Admin — can comment as anyone %>
         <select name="comment[user_id]">
