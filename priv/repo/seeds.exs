@@ -8,17 +8,27 @@ alias Zipsocial.Social
 alias Zipsocial.Accounts
 
 # ----------------------------- Admin seed --------------------------------
-# Creates a default instructor account. Change the password immediately
-# after first login!
+# Creates an instructor account with a random password on first run.
+# The generated password is printed to the log — change it after first login!
 case Accounts.get_admin_by_email("admin@zipsocial.dev") do
   nil ->
+    password = :crypto.strong_rand_bytes(12) |> Base.url_encode64(padding: false)
+
     {:ok, _admin} = Accounts.create_admin(%{
       "name"                  => "Head Instructor",
       "email"                 => "admin@zipsocial.dev",
-      "password"              => "changeme123",
-      "password_confirmation" => "changeme123"
+      "password"              => password,
+      "password_confirmation" => password
     })
-    IO.puts("Created default admin: admin@zipsocial.dev / changeme123  ← change this!")
+
+    IO.puts("""
+    ============================================================
+    Initial admin account created.
+      Email   : admin@zipsocial.dev
+      Password: #{password}
+    Log in and change this password immediately!
+    ============================================================
+    """)
 
   _existing ->
     IO.puts("Default admin already exists, skipping.")
