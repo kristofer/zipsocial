@@ -1,0 +1,32 @@
+<div class="card">
+  <h2>Edit admin — <%= @admin.name %></h2>
+
+  <.form :let={f} for={@changeset} method="put" action={"/admin/#{@admin.id}"}>
+    <label>Name</label>
+    <input type="text" name="admin[name]" value={Phoenix.HTML.Form.input_value(f, :name)} />
+
+    <label>Email</label>
+    <input type="email" name="admin[email]" value={Phoenix.HTML.Form.input_value(f, :email)} autocomplete="off" />
+
+    <label>New password <span class="muted">(leave blank to keep current)</span></label>
+    <input type="password" name="admin[password]" autocomplete="new-password" />
+
+    <label>Confirm new password</label>
+    <input type="password" name="admin[password_confirmation]" autocomplete="new-password" />
+
+    <%= if @changeset.action do %>
+      <div class="errors">
+        <strong>Fix these errors:</strong>
+        <ul>
+          <%= for {field, {msg, _}} <- @changeset.errors do %>
+            <li><%= field %> <%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <button type="submit">Save changes</button>
+  </.form>
+</div>
+
+<p><a href="/admin">← back to admins</a></p>

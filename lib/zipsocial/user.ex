@@ -42,4 +42,16 @@ defmodule Zipsocial.User do
     |> validate_inclusion(:language, ["java", "python"])
     |> validate_length(:name, min: 2, max: 50)
   end
+
+  @doc """
+  Changeset used when an admin edits an existing student profile.
+  All fields are updatable; none are required to change each time.
+  """
+  def update_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:name, :cohort, :language, :bio])
+    |> validate_required([:name, :cohort, :language])
+    |> validate_inclusion(:language, ["java", "python"])
+    |> validate_length(:name, min: 2, max: 50)
+  end
 end

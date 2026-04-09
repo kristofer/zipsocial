@@ -1,10 +1,28 @@
 # Run with: mix run priv/repo/seeds.exs
 #
 # Populates the DB with a handful of students, posts, and comments so the
-# feed isn't empty on first boot.
+# feed isn't empty on first boot, plus a default admin (instructor) account.
 
 alias Zipsocial.Repo
 alias Zipsocial.Social
+alias Zipsocial.Accounts
+
+# ----------------------------- Admin seed --------------------------------
+# Creates a default instructor account. Change the password immediately
+# after first login!
+case Accounts.get_admin_by_email("admin@zipsocial.dev") do
+  nil ->
+    {:ok, _admin} = Accounts.create_admin(%{
+      "name"                  => "Head Instructor",
+      "email"                 => "admin@zipsocial.dev",
+      "password"              => "changeme123",
+      "password_confirmation" => "changeme123"
+    })
+    IO.puts("Created default admin: admin@zipsocial.dev / changeme123  ← change this!")
+
+  _existing ->
+    IO.puts("Default admin already exists, skipping.")
+end
 
 {:ok, alex} = Social.create_user(%{
   "name" => "Alex Chen",

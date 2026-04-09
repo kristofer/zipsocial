@@ -1,0 +1,14 @@
+<div class="card" style="max-width: 420px; margin: 60px auto;">
+  <h2>Admin Login</h2>
+  <p class="muted">Instructors only. Students don't need an account to browse the feed.</p>
+
+  <.form :let={f} for={%{}} as={:session} action="/login">
+    <label>Email</label>
+    <input type="email" name="session[email]" value={Phoenix.HTML.Form.input_value(f, :email)} autocomplete="email" />
+
+    <label>Password</label>
+    <input type="password" name="session[password]" autocomplete="current-password" />
+
+    <button type="submit">Log in</button>
+  </.form>
+</div>
