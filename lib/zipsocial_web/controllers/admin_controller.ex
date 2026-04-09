@@ -31,6 +31,10 @@ defmodule ZipsocialWeb.AdminController do
   def create(conn, %{"admin" => admin_params}) do
     case Accounts.create_admin(admin_params) do
       {:ok, admin} ->
+        # Ensure a regular User with the same email exists so the person can
+        # also log in as a student. If one already exists, leave it alone.
+        ensure_user_for_admin(admin)
+
         conn
         |> put_flash(:info, "Admin #{admin.name} created successfully.")
         |> redirect(to: "/admin")
@@ -85,6 +89,35 @@ defmodule ZipsocialWeb.AdminController do
       conn
       |> put_flash(:info, "Admin #{admin.name} deleted.")
       |> redirect(to: "/admin")
+    end
+  end
+
+  # --------------- helpers -----------------------------------------------
+
+  # Creates a corresponding User record for the admin (so they can also log
+  # in as a normal student). If a User with that email already exists, we
+  # make sure it has a password set.
+  defp ensure_user_for_admin(admin) do
+    alias Zipsocial.Social
+
+    case Social.get_user_by_email(admin.email) do
+      nil ->
+        case Social.create_user(%{
+          "name" => admin.name,
+          "email" => admin.email,
+          "cohort" => "admin",
+          "language" => "java"
+        }) do
+          {:ok, user} -> Accounts.set_default_password(user)
+          _ -> :ok
+        end
+
+      existing_user ->
+        if is_nil(existing_user.password_hash) do
+          Accounts.set_default_password(existing_user)
+        end
+
+        :ok
     end
   end
 end

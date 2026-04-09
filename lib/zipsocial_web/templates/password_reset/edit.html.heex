@@ -1,0 +1,23 @@
+<div class="card" style="max-width: 420px; margin: 60px auto;">
+  <h2>Set New Password</h2>
+  <p class="muted">Enter your reset code and choose a new password.</p>
+
+  <form method="post" action={"/password-reset/#{@token}"}>
+    <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+    <label>Reset code</label>
+    <input type="text" name="reset[token_display]" value={@token} readonly style="background: #0b1622; color: var(--muted);" />
+
+    <label>New password</label>
+    <input type="password" name="reset[password]" autocomplete="new-password" />
+
+    <label>Confirm new password</label>
+    <input type="password" name="reset[password_confirmation]" autocomplete="new-password" />
+
+    <button type="submit">Update password</button>
+  </form>
+
+  <p class="muted" style="margin-top: 16px;">
+    <a href="/password-reset">Request a new code</a>
+  </p>
+</div>

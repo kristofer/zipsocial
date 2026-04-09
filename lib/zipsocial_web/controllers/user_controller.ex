@@ -20,6 +20,12 @@ defmodule ZipsocialWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     case Social.create_user(user_params) do
       {:ok, user} ->
+        # If an email was provided, set the default password so the student
+        # can log in immediately.
+        if user.email && user.email != "" do
+          Zipsocial.Accounts.set_default_password(user)
+        end
+
         conn
         |> put_flash(:info, "Student #{user.name} created successfully!")
         |> redirect(to: "/users/#{user.id}")

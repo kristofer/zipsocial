@@ -1,6 +1,6 @@
 <div class="card" style="max-width: 420px; margin: 60px auto;">
-  <h2>Admin Login</h2>
-  <p class="muted">Instructors only. Students don't need an account to browse the feed.</p>
+  <h2>Log In</h2>
+  <p class="muted">Students: log in with your email and the password your instructor set up (default: <code>zipcode0</code>).<br/>Instructors: use your admin credentials.</p>
 
   <.form :let={f} for={%{}} as={:session} action="/login">
     <label>Email</label>
@@ -11,4 +11,8 @@
 
     <button type="submit">Log in</button>
   </.form>
+
+  <p class="muted" style="margin-top: 12px;">
+    <a href="/password-reset">Forgot your password?</a>
+  </p>
 </div>

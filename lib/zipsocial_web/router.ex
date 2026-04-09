@@ -9,6 +9,9 @@ defmodule ZipsocialWeb.Router do
   `pipeline :admin` extends :browser with an authentication check so that
   only logged-in admins can reach the admin-only routes.
 
+  `pipeline :require_auth` extends :browser with an auth check that allows
+  either an admin session OR a regular user session.
+
   IMPORTANT: Phoenix matches routes top-to-bottom.  Specific paths like
   `/users/new` must be declared BEFORE wildcard paths like `/users/:id`.
   The admin-protected scope therefore appears first in the file so that
@@ -28,6 +31,10 @@ defmodule ZipsocialWeb.Router do
 
   pipeline :admin do
     plug ZipsocialWeb.Plugs.RequireAdmin
+  end
+
+  pipeline :require_auth do
+    plug ZipsocialWeb.Plugs.RequireAuth
   end
 
   # Admin-only routes — declared FIRST so specific paths like /users/new
@@ -51,6 +58,15 @@ defmodule ZipsocialWeb.Router do
     delete "/admin/:id", AdminController, :delete
   end
 
+  # Routes that require any login (admin or regular user)
+  scope "/", ZipsocialWeb do
+    pipe_through [:browser, :require_auth]
+
+    get "/posts/new", PostController, :new
+    post "/posts", PostController, :create
+    post "/posts/:id/comments", CommentController, :create
+  end
+
   scope "/", ZipsocialWeb do
     pipe_through :browser
 
@@ -59,20 +75,23 @@ defmodule ZipsocialWeb.Router do
     get "/java", PostController, :index_java
     get "/python", PostController, :index_python
 
-    # Posts
-    get "/posts/new", PostController, :new
-    post "/posts", PostController, :create
+    # Posts (read-only)
     get "/posts/:id", PostController, :show
-    post "/posts/:id/comments", CommentController, :create
 
     # Public user profile pages (read-only)
     get "/users", UserController, :index
     get "/users/:id", UserController, :show
 
-    # Session (login / logout)
+    # Session (login / logout) — handles both admin and regular users
     get "/login", SessionController, :new
     post "/login", SessionController, :create
     delete "/logout", SessionController, :delete
+
+    # Password reset via email OTP
+    get "/password-reset", PasswordResetController, :new
+    post "/password-reset", PasswordResetController, :create
+    get "/password-reset/:token", PasswordResetController, :edit
+    post "/password-reset/:token", PasswordResetController, :update
   end
 end
 

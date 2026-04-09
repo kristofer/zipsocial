@@ -34,17 +34,26 @@
       <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
 
       <label>Commenting as</label>
-      <select name="comment[user_id]">
-        <%= for user <- @users do %>
-          <option value={user.id}><%= user.name %></option>
-        <% end %>
-      </select>
+      <%= if @current_user_id do %>
+        <%# Regular user — locked to their own profile %>
+        <input type="hidden" name="comment[user_id]" value={@current_user_id} />
+        <p style="margin: 4px 0;"><strong><%= hd(@users).name %></strong></p>
+      <% else %>
+        <%# Admin — can comment as anyone %>
+        <select name="comment[user_id]">
+          <%= for user <- @users do %>
+            <option value={user.id}><%= user.name %></option>
+          <% end %>
+        </select>
+      <% end %>
 
       <label>Your comment</label>
       <textarea name="comment[body]" placeholder="What do you think?"></textarea>
 
       <button type="submit">Post comment</button>
     </form>
+  <% else %>
+    <p class="muted"><a href="/login">Log in</a> to leave a comment.</p>
   <% end %>
 </div>
 
