@@ -9,24 +9,44 @@ alias Zipsocial.Accounts
 
 # ----------------------------- Admin seed --------------------------------
 # Creates an instructor account with a random password on first run.
+# Also ensures a corresponding User record exists with the same email
+# so the instructor can also log in as a regular student.
 # The generated password is printed to the log — change it after first login!
 case Accounts.get_admin_by_email("admin@zipsocial.dev") do
   nil ->
     password = :crypto.strong_rand_bytes(12) |> Base.url_encode64(padding: false)
 
-    {:ok, _admin} = Accounts.create_admin(%{
+    {:ok, admin} = Accounts.create_admin(%{
       "name"                  => "Head Instructor",
       "email"                 => "admin@zipsocial.dev",
       "password"              => password,
       "password_confirmation" => password
     })
 
+    # Create corresponding User so the instructor can also log in as a student
+    case Social.get_user_by_email(admin.email) do
+      nil ->
+        case Social.create_user(%{
+          "name"     => admin.name,
+          "email"    => admin.email,
+          "cohort"   => "admin",
+          "language" => "java"
+        }) do
+          {:ok, user} -> Accounts.set_default_password(user)
+          _ -> :ok
+        end
+      _ -> :ok
+    end
+
     IO.puts("""
     ============================================================
     Initial admin account created.
-      Email   : admin@zipsocial.dev
-      Password: #{password}
-    Log in and change this password immediately!
+      Email         : admin@zipsocial.dev
+      Admin password: #{password}
+      User password : zipcode0
+    Log in as admin at /login with the admin password.
+    Log in as a student at /login with password: zipcode0
+    Change the admin password immediately after first login!
     ============================================================
     """)
 
@@ -34,26 +54,36 @@ case Accounts.get_admin_by_email("admin@zipsocial.dev") do
     IO.puts("Default admin already exists, skipping.")
 end
 
+# ----------------------------- Student seeds -----------------------------
+# Create sample students with emails so they can log in.
+# Default password for all is: zipcode0
+
 {:ok, alex} = Social.create_user(%{
   "name" => "Alex Chen",
+  "email" => "alex@zipsocial.dev",
   "cohort" => "2026-Q2",
   "language" => "java",
   "bio" => "Backend-curious. Currently fighting with Spring Boot."
 })
+Accounts.set_default_password(alex)
 
 {:ok, priya} = Social.create_user(%{
   "name" => "Priya Shah",
+  "email" => "priya@zipsocial.dev",
   "cohort" => "2026-Q2",
   "language" => "python",
   "bio" => "Data engineering track. Loves pandas, tolerates numpy."
 })
+Accounts.set_default_password(priya)
 
 {:ok, marcus} = Social.create_user(%{
   "name" => "Marcus Johnson",
+  "email" => "marcus@zipsocial.dev",
   "cohort" => "2026-Q1",
   "language" => "java",
   "bio" => "Got here from the Navy. Learning fast."
 })
+Accounts.set_default_password(marcus)
 
 {:ok, post1} = Social.create_post(%{
   "user_id" => alex.id,
@@ -91,3 +121,6 @@ Social.create_comment(%{
 })
 
 IO.puts("Seeded #{length(Social.list_users())} users and #{length(Social.list_feed())} posts.")
+IO.puts("Student login emails: alex@zipsocial.dev, priya@zipsocial.dev, marcus@zipsocial.dev")
+IO.puts("Default student password: zipcode0")
+

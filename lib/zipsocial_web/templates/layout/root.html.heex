@@ -137,14 +137,24 @@
           <a href="/posts/new">New post</a>
           <a href="/users/new">New student</a>
           <a href="/admin">Admin</a>
-          <span class="muted" style="font-size: 13px;">· <%= current_admin_name(@conn) %></span>
+          <span class="muted" style="font-size: 13px;">· <%= current_admin_name(@conn) %> (admin)</span>
           <form method="post" action="/logout" style="display: inline;">
             <input type="hidden" name="_method" value="DELETE" />
             <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
             <button type="submit" style="background: none; color: var(--muted); border: none; cursor: pointer; font-size: 14px; padding: 0;">Log out</button>
           </form>
         <% else %>
-          <a href="/login">Admin login</a>
+          <%= if user_logged_in?(@conn) do %>
+            <a href="/posts/new">New post</a>
+            <span class="muted" style="font-size: 13px;">· <%= current_user_name(@conn) %></span>
+            <form method="post" action="/logout" style="display: inline;">
+              <input type="hidden" name="_method" value="DELETE" />
+              <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+              <button type="submit" style="background: none; color: var(--muted); border: none; cursor: pointer; font-size: 14px; padding: 0;">Log out</button>
+            </form>
+          <% else %>
+            <a href="/login">Log in</a>
+          <% end %>
         <% end %>
       </div>
     </header>

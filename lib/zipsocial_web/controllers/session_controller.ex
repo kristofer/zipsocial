@@ -1,6 +1,7 @@
 defmodule ZipsocialWeb.SessionController do
   @moduledoc """
-  Handles admin login and logout.
+  Handles login and logout for both admin (instructors) and regular users
+  (students).
 
   GET  /login  — render the login form
   POST /login  — authenticate and start a session
@@ -16,6 +17,7 @@ defmodule ZipsocialWeb.SessionController do
   end
 
   # POST /login
+  # Try admin auth first; fall back to regular user auth.
   def create(conn, %{"session" => %{"email" => email, "password" => password}}) do
     case Accounts.authenticate_admin(email, password) do
       {:ok, admin} ->
@@ -26,9 +28,19 @@ defmodule ZipsocialWeb.SessionController do
         |> redirect(to: "/admin")
 
       :error ->
-        conn
-        |> put_flash(:error, "Invalid email or password.")
-        |> render("new.html")
+        case Accounts.authenticate_user(email, password) do
+          {:ok, user} ->
+            conn
+            |> put_session(:user_id, user.id)
+            |> put_session(:user_name, user.name)
+            |> put_flash(:info, "Welcome back, #{user.name}!")
+            |> redirect(to: "/")
+
+          :error ->
+            conn
+            |> put_flash(:error, "Invalid email or password.")
+            |> render("new.html")
+        end
     end
   end
 
@@ -40,3 +52,4 @@ defmodule ZipsocialWeb.SessionController do
     |> redirect(to: "/")
   end
 end
+

@@ -5,6 +5,9 @@
     <label>Name</label>
     <input type="text" name="user[name]" value={Phoenix.HTML.Form.input_value(f, :name)} />
 
+    <label>Email <span class="muted">(used to log in)</span></label>
+    <input type="email" name="user[email]" value={Phoenix.HTML.Form.input_value(f, :email)} autocomplete="off" />
+
     <label>Cohort</label>
     <input type="text" name="user[cohort]" value={Phoenix.HTML.Form.input_value(f, :cohort)} placeholder="e.g. 2026-Q2" />
 

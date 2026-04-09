@@ -1,0 +1,17 @@
+<div class="card" style="max-width: 420px; margin: 60px auto;">
+  <h2>Reset Your Password</h2>
+  <p class="muted">Enter your email address and we'll send you a reset code.</p>
+
+  <form method="post" action="/password-reset">
+    <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+    <label>Email</label>
+    <input type="email" name="reset[email]" autocomplete="email" placeholder="you@example.com" />
+
+    <button type="submit">Send reset code</button>
+  </form>
+
+  <p class="muted" style="margin-top: 16px;">
+    <a href="/login">← Back to login</a>
+  </p>
+</div>

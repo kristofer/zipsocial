@@ -6,11 +6,20 @@
   <% else %>
     <.form :let={f} for={@changeset} action="/posts">
       <label>Posting as</label>
-      <select name="post[user_id]">
-        <%= for user <- @users do %>
-          <option value={user.id}><%= user.name %> (<%= user.cohort %>)</option>
-        <% end %>
-      </select>
+      <%= if @current_user_id do %>
+        <%# Regular user — locked to their own profile.
+            @users contains exactly this user (set by users_for_session). %>
+        <% [me | _] = @users %>
+        <input type="hidden" name="post[user_id]" value={@current_user_id} />
+        <p style="margin: 4px 0;"><strong><%= me.name %></strong> <span class="muted">(<%= me.cohort %>)</span></p>
+      <% else %>
+        <%# Admin — can post as anyone %>
+        <select name="post[user_id]">
+          <%= for user <- @users do %>
+            <option value={user.id}><%= user.name %> (<%= user.cohort %>)</option>
+          <% end %>
+        </select>
+      <% end %>
 
       <label>Title</label>
       <input type="text" name="post[title]" value={Phoenix.HTML.Form.input_value(f, :title)} placeholder="What did you build?" />
